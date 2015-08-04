@@ -1,5 +1,5 @@
 /**
- * Gulp - Demo 8 - Putting everything together.
+ * Gulp - Demo 10 - Refresh the browser on file change!
  */
 
 var gulp = require( 'gulp' );
@@ -11,38 +11,61 @@ var autoprefixer = require( 'gulp-autoprefixer' );
 var minifyCSS = require( 'gulp-minify-css' );
 var changed = require( 'gulp-changed' );
 var imageop = require( 'gulp-image-optimization' );
+var watchify = require( 'watchify' );
+var buffer = require( 'vinyl-buffer' );
+var watch = require( 'gulp-watch' );
+var browserSync = require( 'browser-sync' );
 
-gulp.task( 'browserify', function () {
-    return browserify( {entries : './src/js/a.js'} )
-        .bundle()
-        .pipe( source( 'app.js' ) )
-        .pipe( gulp.dest( './dist/js' ) );
+gulp.task( 'minifyJs', function () {
+    var b = watchify( browserify( {entries : './src/js/a.js', cache : {}, packageCache : {}} ) );
+
+    var bundle = function () {
+        b.bundle()
+            .pipe( source( 'app.js' ) )
+            .pipe( buffer() )
+            .pipe( uglify() )
+            .pipe( gulp.dest( './dist/js' ) )
+            .pipe( browserSync.reload( {stream : true} ) );
+    };
+
+    b.on( 'update', bundle );
+
+    return bundle();
 } );
 
-gulp.task( 'minifyJs', ['browserify'], function () {
-    return gulp.src( './dist/js/app.js' )
-        .pipe( uglify() )
-        .pipe( gulp.dest( './dist/js' ) );
-} );
-
-gulp.task( 'sass', function () {
+gulp.task( 'minifyCss', function () {
     return gulp.src( './src/scss/*.scss' )
         .pipe( sass() )
         .pipe( autoprefixer() )
-        .pipe( gulp.dest( './dist/css' ) );
-} );
-
-gulp.task( 'minifyCss', ['sass'], function () {
-    return gulp.src( './dist/css/*.css' )
         .pipe( minifyCSS() )
-        .pipe( gulp.dest( './dist/css' ) );
+        .pipe( gulp.dest( './dist/css' ) )
+        .pipe( browserSync.reload( {stream : true} ) );
 } );
 
 gulp.task( 'minifyImages', function () {
     return gulp.src( './src/img/**' )
         .pipe( changed( './dist/img' ) )
         .pipe( imageop() )
-        .pipe( gulp.dest( './dist/img' ) );
+        .pipe( gulp.dest( './dist/img' ) )
+        .pipe( browserSync.reload( {stream : true} ) );
 } );
 
-gulp.task( 'default', ['minifyJs', 'minifyCss', 'minifyImages'] );
+gulp.task( 'watch', ['minifyJs', 'browserSync'], function () {
+    watch( './src/scss/*.scss', function () {
+        gulp.start( 'minifyCss' );
+    } );
+
+    watch( './src/img/**', function () {
+        gulp.start( 'minifyImages' );
+    } );
+} );
+
+gulp.task( 'browserSync', function () {
+    browserSync( {
+        server : {
+            baseDir : './'
+        }
+    } );
+} );
+
+gulp.task( 'default', ['minifyCss', 'minifyImages', 'watch'] );
