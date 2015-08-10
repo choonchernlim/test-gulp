@@ -14,6 +14,7 @@ var imageop = require( 'gulp-image-optimization' );
 var watchify = require( 'watchify' );
 var buffer = require( 'vinyl-buffer' );
 var watch = require( 'gulp-watch' );
+var rename = require( 'gulp-rename' );
 var browserSync = require( 'browser-sync' );
 
 gulp.task( 'minifyJs', function () {
@@ -23,7 +24,9 @@ gulp.task( 'minifyJs', function () {
         b.bundle()
             .pipe( source( 'app.js' ) )
             .pipe( buffer() )
+            .pipe( gulp.dest( './dist/js' ) )
             .pipe( uglify() )
+            .pipe( rename( {suffix : '.min'} ) )
             .pipe( gulp.dest( './dist/js' ) )
             .pipe( browserSync.reload( {stream : true} ) );
     };
@@ -37,12 +40,14 @@ gulp.task( 'minifyCss', function () {
     return gulp.src( './src/scss/*.scss' )
         .pipe( sass() )
         .pipe( autoprefixer() )
+        .pipe( gulp.dest( './dist/css' ) )
         .pipe( minifyCSS() )
+        .pipe( rename( {suffix : '.min'} ) )
         .pipe( gulp.dest( './dist/css' ) )
         .pipe( browserSync.reload( {stream : true} ) );
 } );
 
-gulp.task( 'minifyImages', function () {
+gulp.task( 'optimizeImages', function () {
     return gulp.src( './src/img/**' )
         .pipe( changed( './dist/img' ) )
         .pipe( imageop() )
@@ -56,16 +61,16 @@ gulp.task( 'watch', ['minifyJs', 'browserSync'], function () {
     } );
 
     watch( './src/img/**', function () {
-        gulp.start( 'minifyImages' );
+        gulp.start( 'optimizeImages' );
     } );
 } );
 
 gulp.task( 'browserSync', function () {
     browserSync( {
         server : {
-            baseDir : './dist'
+            baseDir : './'
         }
     } );
 } );
 
-gulp.task( 'default', ['minifyCss', 'minifyImages', 'watch'] );
+gulp.task( 'default', ['minifyCss', 'optimizeImages', 'watch'] );

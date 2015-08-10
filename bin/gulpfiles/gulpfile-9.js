@@ -14,6 +14,7 @@ var imageop = require( 'gulp-image-optimization' );
 var watchify = require( 'watchify' );
 var buffer = require( 'vinyl-buffer' );
 var watch = require( 'gulp-watch' );
+var rename = require( 'gulp-rename' );
 
 gulp.task( 'minifyJs', function () {
     var b = watchify( browserify( {entries : './src/js/a.js', cache : {}, packageCache : {}} ) );
@@ -22,7 +23,9 @@ gulp.task( 'minifyJs', function () {
         b.bundle()
             .pipe( source( 'app.js' ) )
             .pipe( buffer() )
+            .pipe( gulp.dest( './dist/js' ) )
             .pipe( uglify() )
+            .pipe( rename( {suffix : '.min'} ) )
             .pipe( gulp.dest( './dist/js' ) );
     };
 
@@ -35,11 +38,13 @@ gulp.task( 'minifyCss', function () {
     return gulp.src( './src/scss/*.scss' )
         .pipe( sass() )
         .pipe( autoprefixer() )
+        .pipe( gulp.dest( './dist/css' ) )
         .pipe( minifyCSS() )
+        .pipe( rename( {suffix : '.min'} ) )
         .pipe( gulp.dest( './dist/css' ) );
 } );
 
-gulp.task( 'minifyImages', function () {
+gulp.task( 'optimizeImages', function () {
     return gulp.src( './src/img/**' )
         .pipe( changed( './dist/img' ) )
         .pipe( imageop() )
@@ -52,8 +57,8 @@ gulp.task( 'watch', ['minifyJs'], function () {
     } );
 
     watch( './src/img/**', function () {
-        gulp.start( 'minifyImages' );
+        gulp.start( 'optimizeImages' );
     } );
 } );
 
-gulp.task( 'default', ['minifyCss', 'minifyImages', 'watch'] );
+gulp.task( 'default', ['minifyCss', 'optimizeImages', 'watch'] );

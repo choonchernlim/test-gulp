@@ -1,1 +1,8 @@
-body{color:red}span{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}
+body {
+  color: red; }
+
+span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
