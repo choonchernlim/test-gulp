@@ -1,0 +1,29 @@
+grunt.initConfig({
+    sass: {
+        dist: {
+            files: [{
+                src: 'dev/*.scss',
+                dest: '.tmp/styles',
+                expand: true,
+                ext: '.css'
+            }]
+        }
+    },
+    autoprefixer: {
+        dist: {
+            files: [{
+                expand: true,
+                cwd: '.tmp/styles',
+                src: '{,*/}*.css',
+                dest: 'css/styles'
+            }]
+        }
+    },
+    watch: {
+        styles: {
+            files: ['dev/*.scss'],
+            tasks: ['sass:dist', 'autoprefixer:dist']
+        }
+    }
+});
+grunt.registerTask('default', ['styles', 'watch']);

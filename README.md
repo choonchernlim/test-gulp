@@ -1,5 +1,24 @@
 # test-gulp
 
+## 0 - Intro
+
+* Types of tasks
+    * CSS preprocessing
+    * JS transpilling
+    * File minification - JS, CSS and images 
+    
+* Tools: Gulp, Grunt, Broccoli, Mimosa
+
+* Why Gulp?
+    * Grunt
+        * Slower - Processing done in temp files
+        * Configuration over code    
+        * Grunt.txt
+    * Gulp
+        * Faster - Processing done in memory
+        * Code over configuration
+        * Gulp.txt
+
 ## 1 - JS - Basic Gulp structure
 
 * `npm install`
