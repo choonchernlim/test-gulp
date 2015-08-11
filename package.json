@@ -7,6 +7,8 @@
   "devDependencies": {
     "browser-sync": "^2.8.2",
     "browserify": "^11.0.1",
+    "disc": "^1.3.2",
+    "fs": "0.0.2",
     "gulp": "3.8.x",
     "gulp-autoprefixer": "^2.3.1",
     "gulp-changed": "^1.2.1",
@@ -22,6 +24,7 @@
     "gulp-watch": "^4.3.4",
     "jquery": "^2.1.3",
     "merge-stream": "^0.1.8",
+    "opener": "^1.4.1",
     "pretty-hrtime": "^1.0.0",
     "require-dir": "^0.3.0",
     "vinyl-buffer": "^1.0.0",

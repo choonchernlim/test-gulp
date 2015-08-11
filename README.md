@@ -69,3 +69,7 @@
 * Show UI
     * Reload
     * Scroll to top
+
+## 11 - Analyzing browserify bundle's module tree
+
+* output.html
